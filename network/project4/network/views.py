@@ -7,6 +7,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
+from django.core.paginator import Paginator
+
 from .models import User, Post
 
 def index(request):
@@ -32,6 +34,37 @@ def create_post(request):
     return JsonResponse({
         "message" : "Post created succesfully."
     }, status=201)
+
+
+def load_posts(request):
+    if request.method == "GET":
+        #page1 for default
+        page_number = int(request.GET.get("page", 1))
+ 
+        posts = Post.objects.all().order_by("-date")
+
+        posts_paginator = Paginator(posts, 10)
+
+        try:
+            page = posts_paginator.page(page_number)
+
+        except:
+            return JsonResponse({
+                "error" : "Invalid Page"
+            }, status=400)
+
+
+        return JsonResponse(
+            {
+                "posts" : [post.serialize() for post in page],
+                "has_next" : page.has_next(),
+                "has_previous" : page.has_previous(),
+                "current_page" : page.number,
+                "total_pages" : posts_paginator.num_pages,
+            }
+            
+            ,safe=False
+            )
     
 
 

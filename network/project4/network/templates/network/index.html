@@ -1,16 +1,38 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    <div id="profile">
+    <div id="div-profile">
         <h2>{{request.username}}</h2>
 
     </div>
 
-    <div id="all-posts">
+    <div id="div-all-posts">
+
+        <form>
+            <label for="post-content">New Post:</label><br>
+            <textarea id="post-content" name="content" placeholder="Type here..."></textarea>
+            <input type="submit" value="Post">
+        </form>
+        <hr>
+
+        <div id="div-load-posts">
+
+        </div>
+
+
+        <nav aria-label="Page Navigation">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link">Previous</a></li>
+                <li class="page-item"><a class="page-link">1</a></li>
+                <li class="page-item"><a class="page-link">2</a></li>
+                <li class="page-item"><a class="page-link">3</a></li>
+                <li class="page-item"><a class="page-link">Next</a></li>
+            </ul>
+        </nav>
 
     </div>
 
-    <div id="following">
+    <div id="div-following">
 
     </div>
 {% endblock %}

@@ -18,4 +18,16 @@ class Post(models.Model):
         else:
             self.likes.add(user)
             return True
+        
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "author" : self.author,
+            "content" : self.content,
+            "likes" : self.likes,
+            "date" : self.date
+        }
+    
+    def __str__(self):
+        return f"{self.author}: {self.content} | {self.likes.count()} likes | {self.date}"
 
