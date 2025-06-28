@@ -4,6 +4,12 @@ from django.db import models
 
 class User(AbstractUser):
     followers = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="following")
+
+    def serialize_user(self):
+        return {
+            "id" : self.id,
+            "username" : self.username
+        }
     
 
 class Post(models.Model):
@@ -22,9 +28,12 @@ class Post(models.Model):
     def serialize(self):
         return {
             "id" : self.id,
-            "author" : self.author,
+            "author" : {
+                 "username" : self.author.username,
+                 "followers" : self.author.followers.count()
+                 },
             "content" : self.content,
-            "likes" : self.likes,
+            "likes" : self.likes.count(),
             "date" : self.date
         }
     

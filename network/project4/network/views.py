@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
+from django.views.decorators.csrf import csrf_exempt
 
 from django.core.paginator import Paginator
 
@@ -36,6 +37,7 @@ def create_post(request):
     }, status=201)
 
 
+@csrf_exempt
 def load_posts(request):
     if request.method == "GET":
         #page1 for default
