@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.core.paginator import Paginator
 
@@ -33,7 +34,8 @@ def create_post(request):
     
     post = Post.objects.create(content=content_post, author=request.user)
     return JsonResponse({
-        "message" : "Post created succesfully."
+        "message" : "Post created succesfully.",
+        "post" : post.serialize()
     }, status=201)
 
 
@@ -68,7 +70,25 @@ def load_posts(request):
             ,safe=False
             )
     
+def get_post(request):
+    if request.method == "GET":
+        id_post = request.GET.get("id")
 
+        try:
+            post = Post.objects.get(pk=id_post)
+            return JsonResponse({
+                "post" : post.serialize()
+            }, status=200)
+        
+        except ObjectDoesNotExist:
+            return JsonResponse({
+                "error" : "Post not found"
+            }, status = 404)
+    
+    else:
+        return JsonResponse({
+            "error" : "Method GET required"
+        }, status = 400)
 
 
 def login_view(request):

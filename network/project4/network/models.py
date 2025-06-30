@@ -34,7 +34,7 @@ class Post(models.Model):
                  },
             "content" : self.content,
             "likes" : self.likes.count(),
-            "date" : self.date
+            "date" : self.date.isoformat()
         }
     
     def __str__(self):
