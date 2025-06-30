@@ -2,18 +2,21 @@
 
 {% block body %}
     <div id="div-profile">
-        <h2>{{request.username}}</h2>
 
     </div>
 
     <div id="div-all-posts">
 
-        <form id="new-post-all-posts">
-            <label for="post-content">New Post:</label><br>
-            <textarea id="new-post-content" name="content" placeholder="Type here..."></textarea>
-            <input type="submit" value="Post">
-        </form>
-        <hr>
+        <div id="div-form-all-posts">
+            <form id="new-post-all-posts">
+                <label for="post-content">New Post:</label><br>
+                <textarea id="new-post-content" name="content" placeholder="Type here..."></textarea>
+                <input type="submit" value="Post">
+            </form>
+            <hr>
+
+        </div>
+        
 
         <div id="div-load-posts">
 

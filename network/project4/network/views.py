@@ -17,6 +17,27 @@ def index(request):
     return render(request, "network/index.html")
 
 @login_required
+def get_profile(request):
+    if request.method == "GET":
+        if request.GET.get("id") == "owner_account":
+            user = request.user
+        
+        else:
+            id = int(request.GET.get("id"))
+            user = User.objects.get(pk=id)
+
+
+        return JsonResponse({
+            "profile" : user.serialize()
+        }, status=200)
+
+    else:
+        return JsonResponse({
+            "error" : "Method GET required"
+        }, status=400)
+
+
+@login_required
 def create_post(request):
     
     if request.method != "POST":

@@ -5,10 +5,15 @@ from django.db import models
 class User(AbstractUser):
     followers = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="following")
 
-    def serialize_user(self):
+    def serialize(self):
+        posts = self.posts_created.all().order_by("-date")
+        posts_serialized = [post.serialize() for post in posts]
         return {
             "id" : self.id,
-            "username" : self.username
+            "username" : self.username,
+            "followers" : self.followers.count(),
+            "following" : self.following.count(),
+            "posts_created" : posts_serialized
         }
     
 

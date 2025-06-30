@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     //TODO: clicks for buttons navigation page
-    //TODO: create post in textArea
+    //todo: options in nav
+    //todo: page following
+    //todo: page profile
 
     document.querySelector('#nav-link-profile').addEventListener('click', () => load_page('profile'));
     document.querySelector('#nav-link-all-posts').addEventListener('click', () => load_page('all-posts'));
@@ -30,9 +32,56 @@ function load_page(page) {
     if (page === 'all-posts') {
         load_posts(1);
     }
+    if (page === 'profile'){
+        load_profile();
+    }
+}
+
+function load_profile(){
+    fetch('/profile?id=owner_account')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        generate_elements_profile(data.profile);
+    })
+}
+
+function generate_elements_profile(profile){
+    const heading_user = document.createElement('h4');
+    heading_user.innerHTML = `<strong>${profile.username}</strong>`;
+
+    const num_followers = document.createElement('span')
+    num_followers.innerHTML = `<strong>Followers:</strong> ${profile.followers}`;
+
+    const num_following = document.createElement('span');
+    num_following.innerHTML = `<strong>Following:</strong> ${profile.following}`;
+
+    const line = document.createElement('hr');
+
+    document.querySelector('#div-profile').append(heading_user, num_followers, num_following, line);
+
+    profile.posts_created.forEach(post => {
+        const div = document.createElement('div');
+        div.classList.add('profile-post');
+
+        const content = document.createElement('p');
+        content.innerHTML = post.content;
+
+        const likes = document.createElement('span');
+        likes.innerHTML = `<strong>Likes:</strong> ${post.likes}`;
+        
+        const date = document.createElement('span');
+        date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
+
+        const line = document.createElement('hr');
+
+        div.append(content, likes, date, line);
+        document.querySelector('#div-profile').appendChild(div);
+    })
 }
 
 function load_posts(page_number) {
+    document.querySelector('#div-form-all-posts').style.display = 'block';
     if (page_number === 1) {
         document.querySelector('#page-item-previous').classList.add('disabled');
     }
@@ -175,7 +224,9 @@ function get_post(id) {
         .then(post => {
             console.log(post);
             document.querySelector('#div-page-navigation').style.display = 'none';
+            document.querySelector('#div-form-all-posts').style.display = 'none';
             document.querySelector('#div-load-posts').innerHTML = '';
+        
             generate_div_one_post(post.post);
 
         })
