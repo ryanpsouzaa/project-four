@@ -34,6 +34,7 @@ class Post(models.Model):
         return {
             "id" : self.id,
             "author" : {
+                 "id" : self.author.id,
                  "username" : self.author.username,
                  "followers" : self.author.followers.count()
                  },

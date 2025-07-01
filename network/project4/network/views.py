@@ -16,6 +16,33 @@ from .models import User, Post
 def index(request):
     return render(request, "network/index.html")
 
+def follow_user(request):
+    if request.method == 'GET':
+        id = request.GET.get('id_follow')
+        try:
+            user_follow = User.objects.get(pk=id)
+            if(request.user in user_follow.followers):
+                return JsonResponse({
+                    "follow" : False
+                }, status=200)
+
+            else:
+                user_follow.followers.add(request.user)
+                return JsonResponse({
+                    "message" : f"{request.user.username} is following {user_follow.username}",
+                    "follow" : True
+                }, status=200)
+
+        except ObjectDoesNotExist:
+            return JsonResponse({
+                "error" : "User not found"
+            }, status=404)
+    
+    else:
+        return JsonResponse({
+            "error" : "Method GET required"
+        }, status=400)
+
 @login_required
 def get_profile(request):
     if request.method == "GET":
@@ -28,7 +55,8 @@ def get_profile(request):
 
 
         return JsonResponse({
-            "profile" : user.serialize()
+            "profile" : user.serialize(),
+            "is_owner" : user == request.user 
         }, status=200)
 
     else:

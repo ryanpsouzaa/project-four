@@ -13,6 +13,7 @@ urlpatterns = [
     path("posts/view", views.get_post, name="get_post"),
     path("create", views.create_post, name="create_post"),
     path("profile", views.get_profile, name="get_profile"),
+    path("profile/follow", views.follow_user, name="follow_user")
 
 
 ]

@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //todo: options in nav
     //todo: page following
     //todo: page profile
+    //todo: click events => in buttons... later implemment in div
 
     document.querySelector('#nav-link-profile').addEventListener('click', () => load_page('profile'));
     document.querySelector('#nav-link-all-posts').addEventListener('click', () => load_page('all-posts'));
@@ -37,16 +38,16 @@ function load_page(page) {
     }
 }
 
-function load_profile(){
-    fetch('/profile?id=owner_account')
+//If id is not passed: 'owner_account' for Default
+function load_profile(id = 'owner_account'){
+    fetch(`/profile?id=${id}`)
     .then(response => response.json())
     .then(data => {
-        console.log(data);
-        generate_elements_profile(data.profile);
+        generate_elements_profile(data.profile, data.is_owner);
     })
 }
 
-function generate_elements_profile(profile){
+function generate_elements_profile(profile, is_owner){
     const heading_user = document.createElement('h4');
     heading_user.innerHTML = `<strong>${profile.username}</strong>`;
 
@@ -56,9 +57,19 @@ function generate_elements_profile(profile){
     const num_following = document.createElement('span');
     num_following.innerHTML = `<strong>Following:</strong> ${profile.following}`;
 
+    if(!is_owner){
+        const button_follow = document.createElement('button');
+        button_follow.id = 'profile-follow';
+        button_follow.innerHTML = 'Follow';
+    }
+
     const line = document.createElement('hr');
 
-    document.querySelector('#div-profile').append(heading_user, num_followers, num_following, line);
+    document.querySelector('#div-profile').append(heading_user, num_followers, num_following, button_follow, line);
+
+    button_follow.onclick = () =>{
+        follow_user(profile.author.id);
+    }
 
     profile.posts_created.forEach(post => {
         const div = document.createElement('div');
@@ -80,6 +91,25 @@ function generate_elements_profile(profile){
     })
 }
 
+function follow_user(id){
+    fetch(`/profile/follow?id_profile=${id}`)
+    .then(response => response.json())
+    .then(data => {
+        const status_follow = null;
+        if(data.error){
+            console.log('User not Found');
+        }
+
+        if(data.follow){
+            status_follow = 'Unfollow';
+        }else{
+            status_follow = 'Follow';
+        }
+        document.querySelector('#profile-follow').innerHTML = status_follow;
+    })
+
+}
+
 function load_posts(page_number) {
     document.querySelector('#div-form-all-posts').style.display = 'block';
     if (page_number === 1) {
@@ -97,7 +127,6 @@ function load_posts(page_number) {
             generate_navigation_page(data);
 
             generate_div_all_posts(data);
-
             if (!data.has_next) { }
         })
 }
@@ -122,14 +151,24 @@ function generate_div_all_posts(data) {
         const date = document.createElement('p');
         date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
+        const button_profile = document.createElement('button');
+        button_profile.innerHTML = 'Visit Profile';
+
+        const button_post = document.createElement('button');
+        button_post.innerHTML = 'Visit Post';
+
         const line = document.createElement('hr');
 
-        div_post.append(heading_author, num_followers, content, num_likes, date, line);
+        div_post.append(heading_author, num_followers, button_profile, button_post, content, num_likes, date, line);
         document.querySelector('#div-load-posts').appendChild(div_post);
 
-        div_post.addEventListener('click', ()=>{
-            get_post(post.id);
-        });
+        button_profile.onclick = () =>{
+            load_profile(post.author.id)
+        }
+
+        button_post.onclick = () =>{
+            get_post(post.id)
+        }
     })
 }
 
@@ -144,6 +183,9 @@ function generate_div_one_post(post) {
     const num_followers = document.createElement('p');
     num_followers.innerHTML = `<strong>Followers:</strong> ${post.author.followers}`
 
+    button_profile = document.createElement('button');
+    button_profile.innerHTML = 'Visit Profile';
+
     const content = document.createElement('p');
     content.innerHTML = post.content;
 
@@ -156,10 +198,14 @@ function generate_div_one_post(post) {
     const back_button = document.createElement('button');
     back_button.innerHTML = 'Back to feed';
 
-    div_post.append(heading_author, num_followers, content, num_likes, date, back_button);
+    div_post.append(heading_author, num_followers, button_profile, content, num_likes, date, back_button);
     document.querySelector('#div-load-posts').appendChild(div_post);
 
-    back_button.onclick = () => load_posts(1);
+    back_button.onclick = () => load_posts(1); //current page ???
+
+    button_profile.onclick = () =>{
+        load_profile(post.author.id);
+    }
 }
 
 function generate_navigation_page(data) {
