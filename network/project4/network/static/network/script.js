@@ -43,11 +43,15 @@ function load_profile(id = 'owner_account'){
     fetch(`/profile?id=${id}`)
     .then(response => response.json())
     .then(data => {
+        console.log(data);
         generate_elements_profile(data.profile, data.is_owner);
     })
 }
 
 function generate_elements_profile(profile, is_owner){
+    document.querySelector('#div-all-posts').style.display = 'none';
+    document.querySelector('#div-profile').style.display = 'block';
+
     const heading_user = document.createElement('h4');
     heading_user.innerHTML = `<strong>${profile.username}</strong>`;
 
@@ -57,18 +61,19 @@ function generate_elements_profile(profile, is_owner){
     const num_following = document.createElement('span');
     num_following.innerHTML = `<strong>Following:</strong> ${profile.following}`;
 
-    if(!is_owner){
-        const button_follow = document.createElement('button');
-        button_follow.id = 'profile-follow';
-        button_follow.innerHTML = 'Follow';
-    }
+    const button_follow = document.createElement('button')
+    button_follow.id = 'profile-follow';
+    button_follow.innerHTML = 'Follow';
 
     const line = document.createElement('hr');
 
-    document.querySelector('#div-profile').append(heading_user, num_followers, num_following, button_follow, line);
-
-    button_follow.onclick = () =>{
-        follow_user(profile.author.id);
+    if(!is_owner){
+        document.querySelector(`#div-profile`).append(heading_user, num_followers, num_following, button_follow, line);
+        button_follow.onclick = () =>{
+            load_profile(profile.author.id);
+        }
+    }else{
+        document.querySelector('#div-profile').append(heading_user, num_followers, num_following, line);
     }
 
     profile.posts_created.forEach(post => {
