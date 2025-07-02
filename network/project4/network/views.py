@@ -16,18 +16,24 @@ from .models import User, Post
 def index(request):
     return render(request, "network/index.html")
 
+@login_required
 def follow_user(request):
     if request.method == 'GET':
         id = request.GET.get('id_follow')
+
         try:
             user_follow = User.objects.get(pk=id)
-            if(request.user in user_follow.followers):
+
+            if user_follow.followers.filter(id=request.user.id).exists():
+                user_follow.followers.remove(request.user)
+
                 return JsonResponse({
                     "follow" : False
                 }, status=200)
 
             else:
                 user_follow.followers.add(request.user)
+
                 return JsonResponse({
                     "message" : f"{request.user.username} is following {user_follow.username}",
                     "follow" : True
@@ -48,15 +54,18 @@ def get_profile(request):
     if request.method == "GET":
         if request.GET.get("id") == "owner_account":
             user = request.user
+            is_following = False
         
         else:
             id = int(request.GET.get("id"))
             user = User.objects.get(pk=id)
+            is_following = user.followers.filter(id=request.user.id).exists()
 
 
         return JsonResponse({
             "profile" : user.serialize(),
-            "is_owner" : user == request.user 
+            "is_owner" : user == request.user,
+            "is_following" : is_following
         }, status=200)
 
     else:
@@ -87,14 +96,22 @@ def create_post(request):
         "post" : post.serialize()
     }, status=201)
 
-
+#remove csrf_exempt
 @csrf_exempt
 def load_posts(request):
     if request.method == "GET":
         #page1 for default
         page_number = int(request.GET.get("page", 1))
- 
-        posts = Post.objects.all().order_by("-date")
+        #no filter for default
+        filter = request.GET.get("filter", "none")
+
+        if(filter != "none"):
+            posts = Post.objects.filter(
+                author__in=request.user.following.all()
+            ).order_by("-date")
+            
+        else:
+            posts = Post.objects.all().order_by("-date")
 
         posts_paginator = Paginator(posts, 10)
 
@@ -116,8 +133,7 @@ def load_posts(request):
                 "total_pages" : posts_paginator.num_pages,
             }
             
-            ,safe=False
-            )
+            ,safe=False, status=200)
     
 def get_post(request):
     if request.method == "GET":

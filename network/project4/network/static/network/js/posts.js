@@ -1,132 +1,21 @@
-document.addEventListener('DOMContentLoaded', function () {
+import {load_profile} from './profile.js';
+import {show_div} from './main.js';
 
-    //TODO: clicks for buttons navigation page
-    //todo: options in nav
-    //todo: page following
-    //todo: page profile
-    //todo: click events => in buttons... later implemment in div
-    //todo: erro no follow
+export function load_posts(page_number = 1, filter = 'none') {
 
-    document.querySelector('#nav-link-profile').addEventListener('click', () => load_page('profile'));
-    document.querySelector('#nav-link-all-posts').addEventListener('click', () => load_page('all-posts'));
-    document.querySelector('#nav-link-following').addEventListener('click', () => load_page('following'));
+    show_div('all-posts');
 
-    load_page('all-posts');
-    load_posts(1);
-
-    document.querySelector('#new-post-all-posts').onsubmit = (event) => {
-        event.preventDefault();
-        new_post(
-            document.querySelector('#new-post-content').value
-        );
-        document.querySelector('#new-post-content').value = '';
-    }
-})
-
-
-function load_page(page) {
-    document.querySelector('#div-profile').style.display = 'none';
-    document.querySelector('#div-all-posts').style.display = 'none';
-    document.querySelector('#div-following').style.display = 'none';
-
-    document.querySelector(`#div-${page}`).style.display = 'block';
-
-    if (page === 'all-posts') {
-        load_posts(1);
-    }
-    if (page === 'profile'){
-        load_profile();
-    }
-}
-
-//If id is not passed: 'owner_account' for Default
-function load_profile(id = 'owner_account'){
-    fetch(`/profile?id=${id}`)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-        generate_elements_profile(data.profile, data.is_owner);
-    })
-}
-
-function generate_elements_profile(profile, is_owner){
-    document.querySelector('#div-all-posts').style.display = 'none';
-    document.querySelector('#div-profile').style.display = 'block';
-
-    const heading_user = document.createElement('h4');
-    heading_user.innerHTML = `<strong>${profile.username}</strong>`;
-
-    const num_followers = document.createElement('span')
-    num_followers.innerHTML = `<strong>Followers:</strong> ${profile.followers}`;
-
-    const num_following = document.createElement('span');
-    num_following.innerHTML = `<strong>Following:</strong> ${profile.following}`;
-
-    const button_follow = document.createElement('button')
-    button_follow.id = 'profile-follow';
-    button_follow.innerHTML = 'Follow';
-
-    const line = document.createElement('hr');
-
-    if(!is_owner){
-        document.querySelector(`#div-profile`).append(heading_user, num_followers, num_following, button_follow, line);
-        button_follow.onclick = () =>{
-            follow_user(profile.id);
-        }
-    }else{
-        document.querySelector('#div-profile').append(heading_user, num_followers, num_following, line);
-    }
-
-    profile.posts_created.forEach(post => {
-        const div = document.createElement('div');
-        div.classList.add('profile-post');
-
-        const content = document.createElement('p');
-        content.innerHTML = post.content;
-
-        const likes = document.createElement('span');
-        likes.innerHTML = `<strong>Likes:</strong> ${post.likes}`;
-        
-        const date = document.createElement('span');
-        date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
-
-        const line = document.createElement('hr');
-
-        div.append(content, likes, date, line);
-        document.querySelector('#div-profile').appendChild(div);
-    })
-}
-
-function follow_user(id){
-    fetch(`/profile/follow?id_follow=${id}`)
-    .then(response => response.json())
-    .then(data => {
-        const status_follow = null;
-        if(data.error){
-            console.log('User not Found');
-        }
-
-        if(data.follow){
-            status_follow = 'Unfollow';
-        }else{
-            status_follow = 'Follow';
-        }
-        document.querySelector('#profile-follow').innerHTML = status_follow;
-    })
-
-}
-
-function load_posts(page_number) {
-    document.querySelector('#div-form-all-posts').style.display = 'block';
     if (page_number === 1) {
         document.querySelector('#page-item-previous').classList.add('disabled');
     }
-    fetch(`/posts?page=${page_number}`, {
+
+    fetch(`/posts?page=${page_number}&filter=${filter}`, {
         method: 'GET'
     })
         .then(response => response.json())
         .then(data => {
             console.log(data);
+
             document.querySelector('#div-number-pages').innerHTML = '';
             document.querySelector('#div-load-posts').innerHTML = '';
 
@@ -205,7 +94,7 @@ function generate_div_one_post(post) {
     back_button.innerHTML = 'Back to feed';
 
     div_post.append(heading_author, num_followers, button_profile, content, num_likes, date, back_button);
-    document.querySelector('#div-load-posts').appendChild(div_post);
+    document.querySelector('#div-one-post').appendChild(div_post);
 
     back_button.onclick = () => load_posts(1); //current page ???
 
@@ -215,7 +104,9 @@ function generate_div_one_post(post) {
 }
 
 function generate_navigation_page(data) {
+
     document.querySelector('#div-page-navigation').style.display = 'block';
+
     const button_previous = document.querySelector('#page-item-previous');
     const button_next = document.querySelector('#page-item-next');
 
@@ -247,7 +138,7 @@ function generate_navigation_page(data) {
     }
 }
 
-function new_post(content){
+export function new_post(content){
     fetch('/create', {
         method : 'POST',
         headers: {
@@ -270,14 +161,17 @@ function new_post(content){
     })
 }
 
-function get_post(id) {
+export function get_post(id) {
+
+    show_div('one-post');
+
     fetch(`/posts/view?id=${id}`)
         .then(response => response.json())
         .then(post => {
             console.log(post);
-            document.querySelector('#div-page-navigation').style.display = 'none';
-            document.querySelector('#div-form-all-posts').style.display = 'none';
-            document.querySelector('#div-load-posts').innerHTML = '';
+
+
+            document.querySelector('#div-one-post').innerHTML = '';
         
             generate_div_one_post(post.post);
 
@@ -287,3 +181,4 @@ function get_post(id) {
 function get_csrf_token(){
     return document.querySelector('[name=csrf-token]').content;
 }
+
