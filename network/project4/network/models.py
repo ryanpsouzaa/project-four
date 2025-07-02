@@ -30,7 +30,14 @@ class Post(models.Model):
             self.likes.add(user)
             return True
         
-    def serialize(self):
+    def liked_by_user(self ,user):
+        if self.likes.filter(id=user.id).exists():
+            return True
+        
+        else:
+            return False
+        
+    def serialize(self, user = None):
         return {
             "id" : self.id,
             "author" : {
@@ -40,7 +47,8 @@ class Post(models.Model):
                  },
             "content" : self.content,
             "likes" : self.likes.count(),
-            "date" : self.date.isoformat()
+            "date" : self.date.isoformat(),
+            "liked_by_user" : self.liked_by_user(user) if user else False
         }
     
     def __str__(self):

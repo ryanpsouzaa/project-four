@@ -16,6 +16,35 @@ from .models import User, Post
 def index(request):
     return render(request, "network/index.html")
 
+def like_post(request):
+    if request.method == "GET":
+        id = int(request.GET.get("post"))
+        try: 
+            post = Post.objects.get(pk=id)
+        
+        except ObjectDoesNotExist:
+            return JsonResponse({
+                "error" : "Post not found"
+            }, status=404)
+        
+        if post.likes.all().filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            status_like = False
+
+        else:
+            post.likes.add(request.user)
+            status_like = True
+        
+        return JsonResponse({
+            "status_like" : status_like,
+            "likes_count" : post.likes.all().count()
+        }, status=200)
+                                                                                                                                                                                    
+    else:
+        return JsonResponse({
+            "error" : "Method GET required"
+        }, status=400)
+
 @login_required
 def follow_user(request):
     if request.method == 'GET':
@@ -93,7 +122,7 @@ def create_post(request):
     post = Post.objects.create(content=content_post, author=request.user)
     return JsonResponse({
         "message" : "Post created succesfully.",
-        "post" : post.serialize()
+        "post" : post.serialize(request.user)
     }, status=201)
 
 #remove csrf_exempt
@@ -122,11 +151,10 @@ def load_posts(request):
             return JsonResponse({
                 "error" : "Invalid Page"
             }, status=400)
-
-
+        
         return JsonResponse(
             {
-                "posts" : [post.serialize() for post in page],
+                "posts" : [post.serialize(request.user) for post in page],
                 "has_next" : page.has_next(),
                 "has_previous" : page.has_previous(),
                 "current_page" : page.number,
@@ -142,7 +170,7 @@ def get_post(request):
         try:
             post = Post.objects.get(pk=id_post)
             return JsonResponse({
-                "post" : post.serialize()
+                "post" : post.serialize(request.user)
             }, status=200)
         
         except ObjectDoesNotExist:

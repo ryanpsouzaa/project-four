@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //todo: click events => in buttons... later implemment in div
     //todo: Likes in posts
     //todo: Edit posts
+    //todo: url and states of navigation
 
     //events for clicks in nav links
     document.querySelector('#nav-link-profile').addEventListener('click', () => load_page('profile'));
