@@ -155,6 +155,7 @@ def load_posts(request):
         return JsonResponse(
             {
                 "posts" : [post.serialize(request.user) for post in page],
+                "filter" : filter,
                 "has_next" : page.has_next(),
                 "has_previous" : page.has_previous(),
                 "current_page" : page.number,

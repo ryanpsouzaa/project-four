@@ -1,16 +1,14 @@
 import { load_profile } from './profile.js';
 import {load_posts, new_post} from './posts.js';
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
 
-    //TODO: clicks for buttons navigation page
-    //todo: options in nav
     //todo: click events => in buttons... later implemment in div
-    //todo: Likes in posts
     //todo: Edit posts
     //todo: url and states of navigation
+    //todo: when the nav option is clicked, the page needs to be render
+    //todo: change views.py to render pages
+    //todo: CSS bruh :(
 
     //events for clicks in nav links
     document.querySelector('#nav-link-profile').addEventListener('click', () => load_page('profile'));

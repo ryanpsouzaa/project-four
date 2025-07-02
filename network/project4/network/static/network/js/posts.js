@@ -34,7 +34,7 @@ function like_post(id, event){
         if(event.target.tagName === 'BUTTON' && event.target.dataset.id){
             const button = event.target;
             const like_count = document.querySelector(`p[data-id='${id}']`);
-            like_count.innerHTML = data.likes_count;
+            like_count.innerHTML =`<strong>Likes:</strong> ${data.likes_count}`;
 
             if(data.status_like){
                 button.innerHTML = 'Dislike';
@@ -147,13 +147,28 @@ function generate_navigation_page(data) {
     const button_previous = document.querySelector('#page-item-previous');
     const button_next = document.querySelector('#page-item-next');
 
-    if (!data.has_previous) {
-        button_previous.classList.add('disabled');
-    }
-    if (!data.has_next) {
-        button_next.classList.add('disabled');
+    button_previous.classList.toggle('disabled', !data.has_previous);
+    button_next.classList.toggle('disabled', !data.has_next);
+
+    const current_page = Number(data.current_page);
+    const total_pages = Number(data.total_pages);
+    if(isNaN(current_page) || isNaN(total_pages)){
+        console.error('Invalid data: ', data);
+        return;
     }
 
+    button_previous.onclick = () =>{
+        if(data.has_previous){
+            load_posts(current_page - 1, data.filter);
+        }
+    }
+
+    button_next.onclick = () =>{
+        if(data.has_next){
+            load_posts(current_page + 1, data.filter);
+        }
+    }
+    
     //Logic for navigation buttons
     for (let i = 1; i <= data.total_pages; i++) {
 
@@ -166,12 +181,15 @@ function generate_navigation_page(data) {
 
         const link = document.createElement('a');
         link.classList.add('page-link');
-        link.setAttribute('data-page', i)
         link.innerHTML = i;
+
+        link.onclick = (event) => {
+            event.preventDefault();
+            load_posts(i, data.filter);
+        }
 
         li.appendChild(link);
         document.querySelector('#div-number-pages').appendChild(li);
-
     }
 }
 
