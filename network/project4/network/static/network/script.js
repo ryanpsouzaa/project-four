@@ -19,11 +19,12 @@ function load_page(page){
 
 function load_posts(page_number){
     fetch(`/posts?page=${page_number}`)
-    .then(respnse => Response.json())
+    .then(response => response.json())
     .then(data => {
-
         document.querySelector('div-load-posts').innerHTML = ""
-        data.forEach(post => {
+
+        data.posts.forEach(post => {
+
             const div = document.createElement('div');
             div.classList.add('post-loaded');
 
@@ -32,7 +33,7 @@ function load_posts(page_number){
 
             const content = document.createElement('p');
             content.innerHTML = post.content;
-            
+
             const number_likes = document.createElement('p');
             number_likes.innerHTML = post.likes.count();
 

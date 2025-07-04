@@ -53,7 +53,6 @@ def load_posts(request):
                 "error" : "Invalid Page"
             }, status=400)
 
-
         return JsonResponse(
             {
                 "posts" : [post.serialize() for post in page],
@@ -65,9 +64,9 @@ def load_posts(request):
             
             ,safe=False
             )
-    
-
-
+    return JsonResponse({
+        "error" : "Method GET required"
+    }, status=400)
 
 def login_view(request):
     if request.method == "POST":
