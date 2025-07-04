@@ -37,6 +37,12 @@ class Post(models.Model):
         else:
             return False
         
+    def user_is_owner(self, user):
+        if self.author == user :
+            return True
+        else:
+            return False
+        
     def serialize(self, user = None):
         return {
             "id" : self.id,
@@ -48,7 +54,8 @@ class Post(models.Model):
             "content" : self.content,
             "likes" : self.likes.count(),
             "date" : self.date.isoformat(),
-            "liked_by_user" : self.liked_by_user(user) if user else False
+            "liked_by_user" : self.liked_by_user(user) if user else False,
+            "user_is_owner" : self.user_is_owner(user) if user else False
         }
     
     def __str__(self):

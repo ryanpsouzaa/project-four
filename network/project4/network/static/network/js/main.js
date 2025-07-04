@@ -3,11 +3,8 @@ import {load_posts, new_post} from './posts.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    //todo: click events => in buttons... later implemment in div
-    //todo: Edit posts
+    //todo: Alerts bootStrap on messages and errors
     //todo: url and states of navigation
-    //todo: when the nav option is clicked, the page needs to be render
-    //todo: change views.py to render pages
     //todo: CSS bruh :(
     //todo: hover on posts
 
@@ -51,6 +48,37 @@ export function show_div(div_name){
     document.querySelector('#div-profile').style.display = 'none';
     document.querySelector('#div-all-posts').style.display = 'none';
     document.querySelector('#div-one-post').style.display = 'none';
+    document.querySelector('#div-edit-post').style.display = 'none';
 
     document.querySelector(`#div-${div_name}`).style.display = 'block';
+}
+
+export function show_div_alert(selector, content){
+    const alertBox = selector.querySelector('.alert');
+
+    selector.style.animation = 'none';
+    void selector.offsetWidth;
+    selector.style.animation = null;
+
+    alertBox.textContent = content;
+    selector.style.display = 'block';
+    selector.style.animationPlayState = 'running';
+
+    const onEnd = () => {
+        alertBox.textContent = '';
+        selector.style.display = 'none';
+        selector.removeEventListener('animationend', onEnd);
+    }
+
+    selector.addEventListener('animationend', onEnd);
+}
+
+export function show_error(error_content){
+    const div = document.querySelector('#div-error');
+    show_div_alert(div, error_content);
+}
+
+export function show_message(message_content){
+    const div = document.querySelector('#div-message');
+    show_div_alert(div, message_content);
 }

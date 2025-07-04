@@ -126,6 +126,40 @@ def create_post(request):
         "post" : post.serialize(request.user)
     }, status=201)
 
+@login_required
+def edit_post(request):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        id = data.get("id")
+        new_content = data.get("content")
+
+        try:
+            post = Post.objects.get(pk=id)
+
+            if post.author != request.user:
+                return JsonResponse({
+                    "error" : "Unauthorized"
+                }, status=401)
+
+            else:
+                post.content = new_content
+                post.save()
+
+                return JsonResponse({
+                    "message" : "Post updated",
+                    "post_id" : post.id
+                }, status=200)
+
+        except ObjectDoesNotExist:
+            return JsonResponse({
+                "error" : "Post not found"
+            }, status=404)
+    
+    else:
+        return JsonResponse({
+            "error" : "Method PUT required"
+        }, status=400)
+    
 #remove csrf_exempt
 @csrf_exempt
 def load_posts(request):

@@ -5,6 +5,18 @@
 
     </div>
 
+    <div id="div-error" style="display: none;">
+        <div class="alert alert-danger" role="alert">
+                
+        </div>
+    </div>
+
+    <div id="div-message" style="display: none;">
+        <div class="alert alert-primary" role="alert">
+                
+        </div>
+    </div>
+
     <div id="div-all-posts">
 
         <div id="div-form-all-posts">
@@ -46,6 +58,15 @@
     </div>
 
     <div id="div-following">
+
+    </div>
+
+    <div id="div-edit-post">
+        <form id="form-edit-post">
+            <label for="content-edit-post">Edit Post:</label><br>
+            <textarea id="content-edit-post"></textarea>
+            <input type="submit" value="Edit">
+        </form>
 
     </div>
 {% endblock %}

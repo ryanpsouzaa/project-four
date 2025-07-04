@@ -1,5 +1,5 @@
 import {load_profile} from './profile.js';
-import {show_div} from './main.js';
+import {show_div, show_error, show_message} from './main.js';
 
 export function load_posts(page_number = 1, filter = 'none') {
 
@@ -22,7 +22,6 @@ export function load_posts(page_number = 1, filter = 'none') {
             generate_navigation_page(data);
 
             generate_div_all_posts(data);
-            if (!data.has_next) { }
         })
 }
 
@@ -44,6 +43,50 @@ export function like_post(id, event){
             }
         }
     })
+}
+
+export function edit_post_load(id){
+    const content_form = document.querySelector('#content-edit-post');
+    const form = document.querySelector('#form-edit-post');
+
+    show_div('edit-post');
+
+    fetch(`/posts/view?id=${id}`)
+    .then(response => response.json())
+    .then(data => {
+        content_form.value = data.post.content;
+    })
+
+    form.onsubmit = (event) => {
+        event.preventDefault();
+        const content = content_form.value
+        edit_post(id, content);
+    }
+}
+
+export function edit_post(id, new_content){
+    fetch('/posts/edit', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken' : get_csrf_token()
+            },
+            body: JSON.stringify({
+                id: id,
+                content: new_content 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.message){
+                get_post(id);
+                show_message(data.message);
+
+            } else if(data.error){
+                console.error(data.error);
+                show_error(data.error);
+            }
+        });
 }
 
 function generate_div_all_posts(data) {
@@ -85,7 +128,21 @@ function generate_div_all_posts(data) {
 
         const line = document.createElement('hr');
 
-        div_post.append(heading_author, num_followers, content, num_likes, button_like, date, line);
+        div_post.append(heading_author, num_followers, content, num_likes, button_like, date);
+        //faltam line
+        if(post.user_is_owner){
+            const edit_link = document.createElement('a');
+            edit_link.innerHTML = 'Edit';
+            edit_link.onclick = (event) => {
+                event.stopPropagation();
+                edit_post_load(post.id);
+            }
+            div_post.append(edit_link, line);
+
+        }else{
+            div_post.append(line);
+        }
+    
         document.querySelector('#div-load-posts').appendChild(div_post);
     })
 }
