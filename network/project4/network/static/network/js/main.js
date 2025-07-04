@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //todo: when the nav option is clicked, the page needs to be render
     //todo: change views.py to render pages
     //todo: CSS bruh :(
+    //todo: hover on posts
 
     //events for clicks in nav links
     document.querySelector('#nav-link-profile').addEventListener('click', () => load_page('profile'));

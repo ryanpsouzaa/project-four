@@ -5,9 +5,9 @@ from django.db import models
 class User(AbstractUser):
     followers = models.ManyToManyField("self", symmetrical=False, blank=True, related_name="following")
 
-    def serialize(self):
+    def serialize(self, user = None):
         posts = self.posts_created.all().order_by("-date")
-        posts_serialized = [post.serialize() for post in posts]
+        posts_serialized = [post.serialize(user) for post in posts]
         return {
             "id" : self.id,
             "username" : self.username,

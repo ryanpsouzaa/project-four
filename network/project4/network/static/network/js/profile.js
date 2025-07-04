@@ -1,4 +1,5 @@
 import {show_div} from './main.js'
+import {get_post, like_post} from './posts.js'
 //If id is not passed: 'owner_account' for Default
 export function load_profile(id = 'owner_account'){
 
@@ -8,6 +9,7 @@ export function load_profile(id = 'owner_account'){
     .then(response => response.json())
     .then(data => {
         console.log(data);
+        console.log(data.profile);
 
         document.querySelector('#div-profile').innerHTML = '';
 
@@ -44,19 +46,32 @@ function generate_elements_profile(profile, is_owner, is_following){
     profile.posts_created.forEach(post => {
         const div = document.createElement('div');
         div.classList.add('profile-post');
+        div.style.cursor = 'pointer';
+        div.onclick = () => {
+            get_post(post.id);
+        }
 
         const content = document.createElement('p');
         content.innerHTML = post.content;
 
-        const likes = document.createElement('span');
+        const likes = document.createElement('p');
+        likes.dataset.id = post.id;
         likes.innerHTML = `<strong>Likes:</strong> ${post.likes}`;
+
+        const button_like = document.createElement('button');
+        button_like.dataset.id = post.id;
+        button_like.innerHTML = post.liked_by_user ? "Dislike" : "Like";
+        button_like.onclick = (event) =>{
+            event.stopPropagation();
+            like_post(post.id, event);
+        }
         
         const date = document.createElement('span');
         date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
         const line = document.createElement('hr');
 
-        div.append(content, likes, date, line);
+        div.append(content, likes, button_like, date, line);
         document.querySelector('#div-profile').appendChild(div);
     })
 }

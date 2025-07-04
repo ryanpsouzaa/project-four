@@ -90,9 +90,10 @@ def get_profile(request):
             user = User.objects.get(pk=id)
             is_following = user.followers.filter(id=request.user.id).exists()
 
+        posts_created = user.posts_created.all()
 
         return JsonResponse({
-            "profile" : user.serialize(),
+            "profile" : user.serialize(request.user),
             "is_owner" : user == request.user,
             "is_following" : is_following
         }, status=200)

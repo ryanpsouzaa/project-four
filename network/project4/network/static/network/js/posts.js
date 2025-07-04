@@ -26,7 +26,7 @@ export function load_posts(page_number = 1, filter = 'none') {
         })
 }
 
-function like_post(id, event){
+export function like_post(id, event){
     fetch(`/post/like?post=${id}`)
     .then(response => response.json())
     .then(data => {
@@ -50,9 +50,17 @@ function generate_div_all_posts(data) {
     data.posts.forEach(post => {
         const div_post = document.createElement('div');
         div_post.classList.add('post-loaded');
+        div_post.style.cursor = 'pointer';
+
+        div_post.onclick = () => get_post(post.id);
 
         const heading_author = document.createElement('h4');
-        heading_author.innerHTML = post.author.username;
+        heading_author.innerHTML = `<strong>${post.author.username}</strong>`;
+        heading_author.style.cursor = 'pointer';
+        heading_author.onclick = (event) => {
+            event.stopPropagation();
+            load_profile(post.author.id)
+        };
 
         const num_followers = document.createElement('p');
         num_followers.innerHTML = `<strong>Followers:</strong> ${post.author.followers}`
@@ -67,32 +75,18 @@ function generate_div_all_posts(data) {
         const button_like = document.createElement('button');
         button_like.dataset.id = post.id;
         button_like.innerHTML = post.liked_by_user ? 'Dislike' : 'Like';
+        button_like.onclick = function (event){
+            event.stopPropagation();
+            like_post(post.id, event);
+        }
 
         const date = document.createElement('p');
         date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
-        const button_profile = document.createElement('button');
-        button_profile.innerHTML = 'Visit Profile';
-
-        const button_post = document.createElement('button');
-        button_post.innerHTML = 'Visit Post';
-
         const line = document.createElement('hr');
 
-        div_post.append(heading_author, num_followers, button_profile, button_post, content, num_likes, button_like, date, line);
+        div_post.append(heading_author, num_followers, content, num_likes, button_like, date, line);
         document.querySelector('#div-load-posts').appendChild(div_post);
-
-        button_profile.onclick = () =>{
-            load_profile(post.author.id)
-        }
-
-        button_post.onclick = () =>{
-            get_post(post.id)
-        }
-
-        button_like.onclick = function (event){
-            like_post(post.id, event)
-        }
     })
 }
 
@@ -102,13 +96,14 @@ function generate_div_one_post(post) {
     div_post.classList.add('post-loaded');
 
     const heading_author = document.createElement('h4');
-    heading_author.innerHTML = post.author.username;
+    heading_author.innerHTML = `<strong>${post.author.username}</strong>`;
+    heading_author.style.cursor = 'pointer';
+    heading_author.onclick = () => {
+        load_profile(post.author.id);
+    }
 
     const num_followers = document.createElement('p');
     num_followers.innerHTML = `<strong>Followers:</strong> ${post.author.followers}`
-
-    const button_profile = document.createElement('button');
-    button_profile.innerHTML = 'Visit Profile';
 
     const content = document.createElement('p');
     content.innerHTML = post.content;
@@ -119,25 +114,20 @@ function generate_div_one_post(post) {
     const button_like = document.createElement('button');
     button_like.dataset.id = post.id;
     button_like.innerHTML = post.liked_by_user ? "Dislike" : "Like";
+    button_like.onclick = (event) =>{
+        like_post(post.id, event);
+    }
 
     const date = document.createElement('p');
     date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
     const back_button = document.createElement('button');
     back_button.innerHTML = 'Back to feed';
-
-    div_post.append(heading_author, num_followers, button_profile, content, num_likes, button_like, date, back_button);
-    document.querySelector('#div-one-post').appendChild(div_post);
-
     back_button.onclick = () => load_posts(1); //current page ???
 
-    button_profile.onclick = () =>{
-        load_profile(post.author.id);
-    }
+    div_post.append(heading_author, num_followers, content, num_likes, button_like, date, back_button);
+    document.querySelector('#div-one-post').appendChild(div_post);
 
-    button_like.onclick = function(event){
-        like_post(post.id, event)
-    }
 }
 
 function generate_navigation_page(data) {
