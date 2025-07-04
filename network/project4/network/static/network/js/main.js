@@ -4,6 +4,7 @@ import {load_posts, new_post} from './posts.js';
 document.addEventListener('DOMContentLoaded', function () {
 
     //todo: Alerts bootStrap on messages and errors
+    //todo: apply boostStrap alerts function on messages/errors
     //todo: url and states of navigation
     //todo: CSS bruh :(
     //todo: hover on posts
