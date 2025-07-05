@@ -8,16 +8,20 @@ document.addEventListener('DOMContentLoaded', function () {
     //todo: url and states of navigation
     //todo: CSS bruh :(
     //todo: hover on posts
+    //todo: history ignorando autenticacao
+    //todo: page withou login
 
     //events for clicks in nav links
-    document.querySelector('#nav-link-profile').addEventListener('click', () => load_page('profile'));
-    document.querySelector('#nav-link-all-posts').addEventListener('click', () => load_page('all-posts'));
-    document.querySelector('#nav-link-following').addEventListener('click', () => load_page('following'));
-    document.querySelector('#nav-link-main').addEventListener('click', () => load_page('all-posts'));
+    document.querySelector('#nav-link-profile').addEventListener('click', () => navigate('/profile/'));
+    document.querySelector('#nav-link-all-posts').addEventListener('click', () => navigate('/all-posts/'));
+    document.querySelector('#nav-link-following').addEventListener('click', () => navigate('/following/'));
+    document.querySelector('#nav-link-main').addEventListener('click', () => navigate('/all-posts/'));
 
     //first interaction on site: load all posts
-    load_page('all-posts');
+    router();
     
+    window.addEventListener('popstate', router);
+
     //when the form is submited => a new post is created
     document.querySelector('#new-post-all-posts').onsubmit = (event) => {
         event.preventDefault();
@@ -82,4 +86,27 @@ export function show_error(error_content){
 export function show_message(message_content){
     const div = document.querySelector('#div-message');
     show_div_alert(div, message_content);
+}
+
+function navigate(path){
+    history.pushState({path}, '', path);
+    router();
+}
+
+function router() {
+    const path = location.pathname;
+
+    if (path === '/profile/' || path === '/profile') {
+        load_page('profile');
+
+    } else if (path === '/following/' || path === '/following') {
+        load_page('following');
+
+    } else if (path === '/all-posts/' || path === '/' || path === '/all-posts') {
+        load_page('all-posts');
+
+    } else {
+
+        load_page('all-posts');
+    }
 }

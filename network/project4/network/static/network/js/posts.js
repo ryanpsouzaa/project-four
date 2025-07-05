@@ -9,7 +9,7 @@ export function load_posts(page_number = 1, filter = 'none') {
         document.querySelector('#page-item-previous').classList.add('disabled');
     }
 
-    fetch(`/posts?page=${page_number}&filter=${filter}`, {
+    fetch(`/posts/?page=${page_number}&filter=${filter}`, {
         method: 'GET'
     })
         .then(response => response.json())
@@ -26,7 +26,7 @@ export function load_posts(page_number = 1, filter = 'none') {
 }
 
 export function like_post(id, event){
-    fetch(`/post/like?post=${id}`)
+    fetch(`/post/like/?post=${id}`)
     .then(response => response.json())
     .then(data => {
 
@@ -51,7 +51,7 @@ export function edit_post_load(id){
 
     show_div('edit-post');
 
-    fetch(`/posts/view?id=${id}`)
+    fetch(`/posts/view/?id=${id}`)
     .then(response => response.json())
     .then(data => {
         content_form.value = data.post.content;
@@ -65,7 +65,7 @@ export function edit_post_load(id){
 }
 
 export function edit_post(id, new_content){
-    fetch('/posts/edit', {
+    fetch('/posts/edit/', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -241,7 +241,7 @@ function generate_navigation_page(data) {
 }
 
 export function new_post(content){
-    fetch('/create', {
+    fetch('/create/', {
         method : 'POST',
         headers: {
             'Content-Type' : 'application/json',
@@ -267,7 +267,7 @@ export function get_post(id) {
 
     show_div('one-post');
 
-    fetch(`/posts/view?id=${id}`)
+    fetch(`/posts/view/?id=${id}`)
         .then(response => response.json())
         .then(post => {
             console.log(post);

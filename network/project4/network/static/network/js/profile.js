@@ -5,7 +5,7 @@ export function load_profile(id = 'owner_account'){
 
     show_div('profile');
 
-    fetch(`/profile?id=${id}`)
+    fetch(`/profile/?id=${id}`)
     .then(response => response.json())
     .then(data => {
         console.log(data);
@@ -77,7 +77,7 @@ function generate_elements_profile(profile, is_owner, is_following){
 }
 
 export function follow_user(id){
-    fetch(`/profile/follow?id_follow=${id}`)
+    fetch(`/profile/follow/?id_follow=${id}`)
     .then(response => response.json())
     .then(data => {
         let status_follow = null;
