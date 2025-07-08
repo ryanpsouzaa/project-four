@@ -1,8 +1,15 @@
 import {load_profile} from './profile.js';
-import {show_div, show_error, show_message} from './main.js';
+import {show_div, show_error, show_message, check_auth} from './main.js';
 
-export function load_posts(page_number = 1, filter = 'none') {
+export async function load_posts(page_number = 1, filter = 'none') {
 
+    const auth =  await check_auth();
+    if(!auth){
+        document.querySelector('#div-form-all-posts').style.display = 'none';
+    }else{
+        document.querySelector('#div-form-all-posts').style.display = 'block';
+    }
+    
     show_div('all-posts');
 
     if (page_number === 1) {
@@ -89,7 +96,9 @@ export function edit_post(id, new_content){
         });
 }
 
-function generate_div_all_posts(data) {
+async function generate_div_all_posts(data) {
+    const auth = await check_auth();
+
     data.posts.forEach(post => {
         const div_post = document.createElement('div');
         div_post.classList.add('post-loaded');
@@ -115,20 +124,25 @@ function generate_div_all_posts(data) {
         num_likes.dataset.id = post.id;
         num_likes.innerHTML = `<strong>Likes:</strong> ${post.likes}`;
 
-        const button_like = document.createElement('button');
-        button_like.dataset.id = post.id;
-        button_like.innerHTML = post.liked_by_user ? 'Dislike' : 'Like';
-        button_like.onclick = function (event){
-            event.stopPropagation();
-            like_post(post.id, event);
-        }
-
         const date = document.createElement('p');
         date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
         const line = document.createElement('hr');
 
-        div_post.append(heading_author, num_followers, content, num_likes, button_like, date);
+        div_post.append(heading_author, num_followers, content, num_followers, num_likes);
+
+        if(auth){
+            const button_like = document.createElement('button');
+            button_like.dataset.id = post.id;
+            button_like.innerHTML = post.liked_by_user ? 'Dislike' : 'Like';
+            button_like.onclick = function (event){
+                event.stopPropagation();
+                like_post(post.id, event);
+            }
+            div_post.append(button_like);    
+        }
+
+        div_post.append(date);
         //faltam line
         if(post.user_is_owner){
             const edit_link = document.createElement('a');
@@ -147,7 +161,8 @@ function generate_div_all_posts(data) {
     })
 }
 
-function generate_div_one_post(post) {
+async function generate_div_one_post(post) {
+    const auth = await check_auth();
 
     const div_post = document.createElement('div');
     div_post.classList.add('post-loaded');
@@ -168,13 +183,6 @@ function generate_div_one_post(post) {
     const num_likes = document.createElement('p');
     num_likes.innerHTML = `<strong>Likes:</strong> ${post.likes}`;
 
-    const button_like = document.createElement('button');
-    button_like.dataset.id = post.id;
-    button_like.innerHTML = post.liked_by_user ? "Dislike" : "Like";
-    button_like.onclick = (event) =>{
-        like_post(post.id, event);
-    }
-
     const date = document.createElement('p');
     date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
@@ -182,9 +190,20 @@ function generate_div_one_post(post) {
     back_button.innerHTML = 'Back to feed';
     back_button.onclick = () => load_posts(1); //current page ???
 
-    div_post.append(heading_author, num_followers, content, num_likes, button_like, date, back_button);
-    document.querySelector('#div-one-post').appendChild(div_post);
+    div_post.append(heading_author, num_followers, content, num_likes);
 
+    if(auth){
+        const button_like = document.createElement('button');
+        button_like.dataset.id = post.id;
+        button_like.innerHTML = post.liked_by_user ? "Dislike" : "Like";
+        button_like.onclick = (event) =>{
+            like_post(post.id, event);
+        }
+        div_post.append(button_like);
+    }
+
+    div_post.append(date, back_button);
+    document.querySelector('#div-one-post').appendChild(div_post);
 }
 
 function generate_navigation_page(data) {

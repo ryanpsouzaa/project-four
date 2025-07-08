@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
     <div id="div-profile">
@@ -69,4 +70,8 @@
         </form>
 
     </div>
+{% endblock %}
+
+{% block script %} 
+    <script type="module" src="{% static 'network/js/main.js' %}"></script>
 {% endblock %}

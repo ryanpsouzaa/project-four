@@ -13,6 +13,12 @@ from django.core.paginator import Paginator
 
 from .models import User, Post
 
+def user_status(request):
+    return JsonResponse({
+        "authenticated" : request.user.is_authenticated,
+        "username" : request.user.username if request.user.is_authenticated else None
+    })
+
 def index(request):
     return render(request, "network/index.html")
 

@@ -15,7 +15,9 @@ urlpatterns = [
     path("create/", views.create_post, name="create_post"),
     path("profile/", views.get_profile, name="get_profile"),
     path("profile/follow/", views.follow_user, name="follow_user"),
-    path("posts/edit/", views.edit_post, name="edit_post")
+    path("posts/edit/", views.edit_post, name="edit_post"),
+    
+    path("user/status/", views.user_status, name="user_status")
 
 
 ]

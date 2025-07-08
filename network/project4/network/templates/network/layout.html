@@ -11,7 +11,7 @@
     <body>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a id="nav-link-main" class="navbar-brand">Network</a>
+            <a id="nav-link-main" class="navbar-brand" href="{% url 'index' %}">Network</a>
           
             <div>
               <ul class="navbar-nav mr-auto">
@@ -21,7 +21,7 @@
                     </li>
                 {% endif %}
                 <li class="nav-item">
-                  <a id="nav-link-all-posts" class="nav-link">All Posts</a>
+                  <a id="nav-link-all-posts" class="nav-link" href="{% url 'index' %}">All Posts</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
@@ -47,6 +47,7 @@
             {% endblock %}
         </div>
 
-        <script type="module" src="{% static 'network/js/main.js' %}"></script>
+        {% block script %}{% endblock %}
+
     </body>
 </html>
