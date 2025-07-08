@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //todo: hover on posts
     //todo: ignore history
     //todo: fix the delay to form de html
+    //new bug: form in all-posts/following not present
 
 
     const auth = check_auth();

@@ -1,0 +1,41 @@
+@keyframes hide {
+    0%{
+        opacity: 1;
+        height: 100%;
+        line-height: 100%;
+        padding: 20px;
+        margin-bottom: 20px;
+        
+    }75%{
+        opacity: 0;
+        height: 100%;
+        line-height: 100%;
+        padding: 20px;
+        margin-bottom: 20px;
+        
+    }100%{
+        opacity: 0;
+        height: 0px;
+        line-height: 0px;
+        padding: 0px;
+        margin-bottom: 0px;
+
+    }
+}
+
+#div-message, #div-error{
+    animation-name: hide;
+    animation-fill-mode: forwards;
+    animation-duration: 5s;
+    animation-play-state: paused;
+
+}
+
+body{
+    margin-left: 10px;
+}
+
+#div-number-pages{
+    display: flex;
+    flex-direction: row;
+}
