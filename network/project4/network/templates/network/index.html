@@ -2,20 +2,21 @@
 {% load static %}
 
 {% block body %}
-    <div id="div-profile">
-
-    </div>
-
     <div id="div-error" style="display: none;">
         <div class="alert alert-danger" role="alert">
-                
+
         </div>
     </div>
 
     <div id="div-message" style="display: none;">
         <div class="alert alert-primary" role="alert">
-                
+
         </div>
+    </div>
+
+
+    <div id="div-profile">
+
     </div>
 
     <div id="div-all-posts">
@@ -43,7 +44,7 @@
                 
 
 
-                </div>
+                  </div>
                 
                 <li id="page-item-next" class="page-item"><a id="page-link-next" class="page-link">Next</a></li>
             </ul>
@@ -64,14 +65,14 @@
 
     <div id="div-edit-post">
         <form id="form-edit-post">
-            <label for="content-edit-post">Edit Post:</label><br>
+            <label for="content-edit-post">Edit Post:</label><br>'
             <textarea id="content-edit-post"></textarea>
             <input type="submit" value="Edit">
         </form>
-
     </div>
+
 {% endblock %}
 
-{% block script %} 
+{% block script %}
     <script type="module" src="{% static 'network/js/main.js' %}"></script>
 {% endblock %}

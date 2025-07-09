@@ -3,6 +3,8 @@ import {show_div, show_error, show_message, check_auth} from './main.js';
 
 export async function load_posts(page_number = 1, filter = 'none') {
 
+    show_div('all-posts');
+
     const auth =  await check_auth();
     if(!auth){
         document.querySelector('#div-form-all-posts').style.display = 'none';
@@ -10,7 +12,6 @@ export async function load_posts(page_number = 1, filter = 'none') {
         document.querySelector('#div-form-all-posts').style.display = 'block';
     }
     
-    show_div('all-posts');
 
     if (page_number === 1) {
         document.querySelector('#page-item-previous').classList.add('disabled');
@@ -21,7 +22,10 @@ export async function load_posts(page_number = 1, filter = 'none') {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            console.log(data); //remove this log
+            if(data.error){
+                show_error(data.error);
+            }
 
             document.querySelector('#div-number-pages').innerHTML = '';
             document.querySelector('#div-load-posts').innerHTML = '';
@@ -36,6 +40,10 @@ export function like_post(id, event){
     fetch(`/post/like/?post=${id}`)
     .then(response => response.json())
     .then(data => {
+
+        if(data.error){
+            show_error(data.error);
+        }
 
         if(event.target.tagName === 'BUTTON' && event.target.dataset.id){
             const button = event.target;
@@ -61,6 +69,10 @@ export function edit_post_load(id){
     fetch(`/posts/view/?id=${id}`)
     .then(response => response.json())
     .then(data => {
+
+        if(data.error){
+            show_error(data.error);
+        }
         content_form.value = data.post.content;
     })
 
@@ -107,6 +119,7 @@ async function generate_div_all_posts(data) {
         div_post.onclick = () => get_post(post.id);
 
         const heading_author = document.createElement('h4');
+        heading_author.classList.add('post-loaded-heading');
         heading_author.innerHTML = `<strong>${post.author.username}</strong>`;
         heading_author.style.cursor = 'pointer';
         heading_author.onclick = (event) => {
@@ -115,16 +128,20 @@ async function generate_div_all_posts(data) {
         };
 
         const num_followers = document.createElement('p');
+        num_followers.classList.add('post-loaded-num-followers');
         num_followers.innerHTML = `<strong>Followers:</strong> ${post.author.followers}`
 
         const content = document.createElement('p');
+        content.classList.add('post-loaded-content');
         content.innerHTML = post.content;
 
         const num_likes = document.createElement('p');
+        num_likes.classList.add('post-loaded-num-likes');
         num_likes.dataset.id = post.id;
         num_likes.innerHTML = `<strong>Likes:</strong> ${post.likes}`;
 
         const date = document.createElement('p');
+        date.classList.add('post-loaded-date');
         date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
         const line = document.createElement('hr');
@@ -133,6 +150,7 @@ async function generate_div_all_posts(data) {
 
         if(auth){
             const button_like = document.createElement('button');
+            button_like.classList.add('post-loaded-button-like');
             button_like.dataset.id = post.id;
             button_like.innerHTML = post.liked_by_user ? 'Dislike' : 'Like';
             button_like.onclick = function (event){
@@ -146,6 +164,7 @@ async function generate_div_all_posts(data) {
         //faltam line
         if(post.user_is_owner){
             const edit_link = document.createElement('a');
+            edit_link.classList.add('post-loaded-edit');
             edit_link.innerHTML = 'Edit';
             edit_link.onclick = (event) => {
                 event.stopPropagation();
@@ -168,6 +187,7 @@ async function generate_div_one_post(post) {
     div_post.classList.add('post-loaded');
 
     const heading_author = document.createElement('h4');
+    heading_author.classList.add('post-loaded-heading');
     heading_author.innerHTML = `<strong>${post.author.username}</strong>`;
     heading_author.style.cursor = 'pointer';
     heading_author.onclick = () => {
@@ -175,18 +195,23 @@ async function generate_div_one_post(post) {
     }
 
     const num_followers = document.createElement('p');
+    num_followers.classList.add('post-loaded-num-followers');
     num_followers.innerHTML = `<strong>Followers:</strong> ${post.author.followers}`
 
     const content = document.createElement('p');
+    content.classList.add('post-loaded-content');
     content.innerHTML = post.content;
 
     const num_likes = document.createElement('p');
+    num_likes.classList.add('post-loaded-num-likes');
     num_likes.innerHTML = `<strong>Likes:</strong> ${post.likes}`;
 
     const date = document.createElement('p');
+    date.classList.add('post-loaded-date');
     date.innerHTML = `<strong>Posted:</strong> ${post.date}`;
 
     const back_button = document.createElement('button');
+    back_button.classList.add('post-loaded-back-button');
     back_button.innerHTML = 'Back to feed';
     back_button.onclick = () => load_posts(1); //current page ???
 
@@ -194,12 +219,24 @@ async function generate_div_one_post(post) {
 
     if(auth){
         const button_like = document.createElement('button');
+        button_like.classList.add('post-loaded-button-like');
         button_like.dataset.id = post.id;
         button_like.innerHTML = post.liked_by_user ? "Dislike" : "Like";
         button_like.onclick = (event) =>{
             like_post(post.id, event);
         }
         div_post.append(button_like);
+    }
+
+    if(post.user_is_owner){
+        const link_edit = document.createElement('a');
+        link_edit.classList.add('post-loaded-edit');
+        link_edit.innerHTML = 'Edit';
+        link_edit.addEventListener('click', (event)=>{
+            event.stopPropagation();
+            edit_post_load(post.id);
+        })
+        div_post.append(link_edit);
     }
 
     div_post.append(date, back_button);
@@ -241,13 +278,13 @@ function generate_navigation_page(data) {
         const li = document.createElement('li');
         li.classList.add('page-item');
 
-        if (i === data.current_page) {
-            li.classList.add('active');
-        }
-
         const link = document.createElement('a');
         link.classList.add('page-link');
         link.innerHTML = i;
+        
+        if (i === data.current_page){
+            link.classList.add('active')
+        }
 
         link.onclick = (event) => {
             event.preventDefault();
@@ -273,11 +310,13 @@ export function new_post(content){
     }).then(response => response.json())
     .then(data => {
         if(data.error){
-            console.log(data.error)
-        }else{  
-            console.log(data.message)
-            console.log(data.post)
-            get_post(data.post.id)
+            show_error(data.error);
+            console.log(data.error);
+        }else{
+            show_message(data.message);  
+            console.log(data.message);
+            console.log(data.post);
+            get_post(data.post.id);
         }
     })
 }
@@ -291,6 +330,9 @@ export function get_post(id) {
         .then(post => {
             console.log(post);
 
+            if(post.error){
+                show_error(post.error);
+            }
 
             document.querySelector('#div-one-post').innerHTML = '';
         

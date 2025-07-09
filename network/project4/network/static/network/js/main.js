@@ -3,12 +3,13 @@ import {load_posts, new_post} from './posts.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    //todo: apply boostStrap alerts function on messages/errors
+    //todo: increase time of alerts of errors and messages
     //todo: CSS bruh :(
-    //todo: hover on posts
     //todo: ignore history
-    //todo: fix the delay to form de html
-    //new bug: form in all-posts/following not present
+    //todo: fix the delay/conflict to render pages (all posts, following and etc)
+    //new bug: form in all-posts/following not present (fixed)
+    //todo: link edit post on profile option
+    //todo: atualizar em tempo real o numero de seguidores/seguindo
 
 
     const auth = check_auth();

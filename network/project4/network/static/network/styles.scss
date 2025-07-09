@@ -1,3 +1,6 @@
+$button-color: #007bff;
+$button-color-hover: #0056b3;
+
 @keyframes hide {
     0%{
         opacity: 1;
@@ -32,10 +35,228 @@
 }
 
 body{
-    margin-left: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 0 15px;
+
+    #div-profile,
+    #div-all-posts,
+    #div-one-post{
+        max-width: 700px;
+        margin: 30px auto;
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+    }
+
+    #div-form-all-posts{
+        margin-bottom: 20px;
+    }
+
+    #new-post-all-posts textarea{
+        width: 100%;
+        height: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        resize: vertical;
+        font-size: 15px;
+        font-family: inherit;
+    }
+
+    #new-post-all-posts input[type="submit"] {
+        background-color: $button-color;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.2s;
+    }
+
+    #new-post-all-posts input[type="submit"]:hover{
+        background-color: $button-color-hover;
+    }
+
+    .post-loaded{
+        padding: 20px;
+        margin-bottom: 25px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #fafafa;
+        transition: background 0.2s;
+
+    }
+
+    .post-loaded:hover{
+        background-color: #f0f8ff;
+    }
+
+    .post-loaded-heading{
+        margin: 0;
+        font-size: 20px;
+        color: #333;
+    }
+
+    .post-loaded-heading:hover{
+        text-decoration: underline;
+        color: #007bff;
+    }
+
+    .post-loaded-num-followers,
+    .post-loaded-num-likes,
+    .post-loaded-content,
+    .post-loaded-date{
+        margin: 5px 0;
+        color: #555;
+        font-size: 15px;
+    }
+
+    .post-loaded-edit{
+        display: inline-block;
+        margin-top: 10px;
+        color: #007bff;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .post-loaded-edit:hover{
+        text-decoration: underline;
+    }
+
+    .post-loaded-button-like{
+        display: inline-block;
+        margin-top: 10px;
+        padding: 6px 12px;
+        background-color: $button-color;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .post-loaded-button-like:hover{
+        background-color: $button-color-hover;
+    }
+
+    .post-loaded-back-button{
+        margin-top: 15px;
+        background-color: $button-color;
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .post-loaded-back-button:hover{
+        background-color: $button-color-hover;
+    }
+
+
+    .post-loaded{
+        margin-bottom: 20px;
+    }
+    .post-loaded:hover{
+        background-color: rgb(213, 204, 204);
+    }
+
+    #div-page-navigation{
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+
+    .pagination{
+        display: flex;
+        list-style: none;
+        padding: 0;
+        gap: 10px;
+    }
+
+    .page-item{
+        cursor: pointer;
+    }
+
+    .active{
+        background-color: $button-color;
+    }
+
+    .page-link{
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.2s;
+    }
+
+    .page-link:hover{
+        background-color: $button-color-hover;
+    }
+
+    #div-number-pages{
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    #div-profile{
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    #div-profile h4{
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    #div-profile span{
+        display: inline-block;
+        margin-right: 15px;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    #profile-follow{
+        margin-top: 10px;
+        margin-bottom: 20px;
+        padding: 8px 16px;
+        border: none;
+        background-color: $button-color;
+        color:white;
+        transition: background-color 0.3s ease;
+    }
+
+    #profile-follow:hover{
+        background-color: $button-color-hover;
+    }
+
+    .profile-post{
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        background-color: #fafafa;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .profile-post:hover{
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    hr{
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border: 0;
+        border-top: 1px solid #eee;
+    }
+
 }
 
-#div-number-pages{
-    display: flex;
-    flex-direction: row;
-}
