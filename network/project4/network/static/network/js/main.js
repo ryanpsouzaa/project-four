@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //new bug: form in all-posts/following not present (fixed)
     //todo: link edit post on profile option
     //todo: atualizar em tempo real o numero de seguidores/seguindo
+    //todo: delay to render pages
 
 
     const auth = check_auth();
